@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SeatReservation
+namespace TakeHomeQuestion
 {
     internal class SeatReservation
     {
@@ -49,42 +49,34 @@ namespace SeatReservation
 
                         Console.WriteLine("Preference for seating(1 for back, 2 for front )");
                         int preference = Convert.ToInt32(Console.ReadLine());
-
                         theatreArray = ReserveSeats(theatreArray, numberOfSeats, preference);
                         break;
 
                     case 2:
-
                         Console.WriteLine("Enter adjacent seats do you require:");
                         numberOfSeats = Convert.ToInt32(Console.ReadLine());
-
                         Console.WriteLine("Enter the row number between 1 to 8:");
                         int row = Convert.ToInt32(Console.ReadLine());
-
                         Console.WriteLine("Enter the Column number between 1 to 10:");
                         int columnStart = Convert.ToInt32(Console.ReadLine());
-
-                        ReserveSeats(theatreArray, numberOfSeats, row, columnStart);
+                        theatreArray = ReserveSeats(theatreArray, numberOfSeats, row, columnStart);
                         break;
 
                     case 3:
                         Console.WriteLine("Please Enter your booking number cancel your seats");
                         int cancelbookingNumber = Convert.ToInt32(Console.ReadLine());
-
-                        CancelSeats(theatreArray, cancelbookingNumber);
+                        theatreArray = CancelSeats(theatreArray, cancelbookingNumber);
                         break;
 
                     case 4:
                         Console.WriteLine("Which row would you like to remove empty seats from");
                         int rowToDelete = Convert.ToInt32(Console.ReadLine());
-
-                        RemoveEmptySeatsRow(theatreArray, rowToDelete);
+                        theatreArray = RemoveEmptySeatsRow(theatreArray, rowToDelete);
                         break;
 
                     case 5:
                         Console.WriteLine("Reservation Number you are searching for:");
                         int searchReservationNumber = Convert.ToInt32(Console.ReadLine());
-
                         Search(theatreArray, searchReservationNumber);
                         break;
 
@@ -96,72 +88,116 @@ namespace SeatReservation
                         DisplayMap(theatreArray);
                         break;
 
+                    case 8:
+                        Console.WriteLine("Thanks for using the application");
+                        break;
+
                     default:
                         Console.WriteLine("Invalid option. Please try again.");
                         break;
                 }
-            } while (option >= 8);
+                
+            } while (option != 8);
         }
 
         static int[,] ReserveSeats(int[,] theatreArray, int numberOfSeats, int preference)
         {
-            int row;
-
+            int row_index, column_index, seatCounter=0;
             if (preference == 1)
             {
-                row = 7;
-            }
-            else
-            {
-                row = 0;
-            }
-
-            int loopCounter = 0;
-            int seatCounter = 0;
-
-            // First loop to check the availability of numberOfSeats adjacent
-            // seats
-            while (loopCounter <= 9 && seatCounter < numberOfSeats)
-            {
-                if (theatreArray[row, loopCounter] == 0)
+                for (row_index = 7; row_index >= 0; row_index--)
                 {
-                    seatCounter++;
-                }
-                if (seatCounter == numberOfSeats)
-                    break;
-
-                loopCounter++;
-            }
-            // Console.WriteLine("loop counter seatCounter numberOfSeats{0} {1}
-            // {2}",loopCounter, seatCounter, numberOfSeats);
-
-            // If numberOfSeats adjacent seats are available, reserve them
-            if (seatCounter == numberOfSeats)
-            {
-                bookingNumber++;
-                int seat_number = bookingNumber;
-                loopCounter = 0;
-                seatCounter = 0;
-                while (loopCounter <= 9 && seatCounter < numberOfSeats)
-                {
-                    if (theatreArray[row, loopCounter] == 0)
+                    column_index = 0;
+                    seatCounter = 0;
+                    // First loop to check the availability of numberOfSeats adjacent seats
+                    while (column_index <= 9 && seatCounter < numberOfSeats)
                     {
-                        theatreArray[row, loopCounter] = seat_number;
-                        seatCounter++;
+                        if (theatreArray[row_index, column_index] == 0)
+                        {
+                            seatCounter++;
+                        }
+                        if (seatCounter == numberOfSeats)
+                            break;
+                        column_index++;
                     }
-
-                    // If all seats are reserved, break the loop
-                    if (seatCounter == numberOfSeats)
-                        break;
-
-                    loopCounter++;
+                    if (seatCounter == numberOfSeats) break;
+                }
+                
+                // If numberOfSeats adjacent seats are available, reserve them
+                if (seatCounter == numberOfSeats)
+                {
+                    bookingNumber++;
+                    int seat_number = bookingNumber;
+                    seatCounter = 0;
+                    column_index = 0;
+                    while (column_index <= 9 && seatCounter < numberOfSeats)
+                    {
+                        if (theatreArray[row_index, column_index] == 0)
+                        {
+                            theatreArray[row_index, column_index] = seat_number;
+                            seatCounter++;
+                        }
+                        // If all seats are reserved, break the loop
+                        if (seatCounter == numberOfSeats)
+                            break;
+                        column_index++;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Reservation could not be made as no adjacent seats are available in row");
+                }
+            }
+            else if (preference == 2)
+                {
+                for (row_index = 0; row_index <= 9; row_index++)
+                {
+                    column_index = 9;
+                    seatCounter = 0;
+                    // First loop to check the availability of numberOfSeats adjacent seats
+                    while (column_index >= 0 && seatCounter < numberOfSeats)
+                    {
+                        if (theatreArray[row_index, column_index] == 0)
+                        {
+                            seatCounter++;
+                        }
+                        if (seatCounter == numberOfSeats)
+                            break;
+                        column_index--;
+                    }
+                    if (seatCounter == numberOfSeats) break;
+                }
+                
+                // If numberOfSeats adjacent seats are available, reserve them
+                if (seatCounter == numberOfSeats)
+                {
+                    bookingNumber++;
+                    int seat_number = bookingNumber;
+                    seatCounter = 0;
+                    column_index = 9;
+                    while (column_index >= 0 && seatCounter < numberOfSeats)
+                    {
+                        if (theatreArray[row_index, column_index] == 0)
+                        {
+                            theatreArray[row_index, column_index] = seat_number;
+                            seatCounter++;
+                        }
+                        // If all seats are reserved, break the loop
+                        if (seatCounter == numberOfSeats)
+                            break;
+                        column_index--;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Reservation could not be made as no adjacent seats are available in row");
                 }
             }
             else
             {
-                Console.WriteLine("Reservation could not be made as no adjacent seats are available in row");
+                Console.WriteLine("Please enter a valid input (1 for back, 2 for front )");
+                return theatreArray;
             }
-
             return theatreArray;
         }
 
@@ -185,9 +221,6 @@ namespace SeatReservation
 
                 loopCounter++;
             }
-
-            // Console.WriteLine("loop counter seatCounter numberOfSeats{0} {1}
-            // {2}",loopCounter, seatCounter, numberOfSeats);
 
             // If numberOfSeats adjacent seats are available, reserve them
             if (seatCounter == numberOfSeats)
@@ -222,7 +255,7 @@ namespace SeatReservation
 
         static int[,] CancelSeats(int[,] theatreArray, int bookingNumber)
         {
-            for (int row = 0; row < 7; row++)
+            for (int row = 0; row <= 7; row++)
             {
                 int seatCount = 1;
                 while (seatCount <= 10)
@@ -242,29 +275,21 @@ namespace SeatReservation
         {
             int slow = 0, fast = 1, temp;
             row--;
-
-            while (fast < 10)
+            while (fast <= 9)
             {
-                
-                if (theatreArray[row, slow] != 0)
-                {
-                    slow++;
-                    fast++;
-                }
-
-                while (theatreArray[row, fast]==0 && fast<9)
+                while (theatreArray[row, slow] == 0 && theatreArray[row, fast] == 0)
                 {
                     fast++;
+                    if (theatreArray[row, fast] == 0 && fast == 9) break;
                 }
-
                 if (theatreArray[row, slow] == 0)
                 {
                     temp = theatreArray[row, slow];
                     theatreArray[row, slow] = theatreArray[row, fast];
                     theatreArray[row, fast] = temp;
-                    slow++;
-                    fast++;
                 }
+                slow++;
+                fast++;
             }
             return theatreArray;
         }
@@ -272,7 +297,6 @@ namespace SeatReservation
         static void Search(int[,] theatreArray, int bookingNumber)
         {
             bool found = false;
-
 
             for (int row = 0; row <= 7; row++)
             {
@@ -309,8 +333,8 @@ namespace SeatReservation
 
         static void DisplayMap(int[,] theatreArray)
         {
-            Console.Write("      ");
-            for (int i = 0; i < 10; i++) Console.Write("  Seat {0}", i + 1);
+            Console.Write("\t");
+            for (int i = 0; i < 10; i++) Console.Write("Seat {0}  ", i + 1);
             Console.WriteLine();
             for (int i = 7; i >= 0; i--)
             {
